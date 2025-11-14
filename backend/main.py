@@ -8,7 +8,8 @@ Main application entry point with API endpoints for:
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from utils_serialization import to_serializable
+from backend.utils_serialization import to_serializable
+
 
 import os
 import tempfile
