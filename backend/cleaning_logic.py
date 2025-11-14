@@ -9,7 +9,7 @@ import numpy as np
 from typing import Dict, Tuple, List, Any
 import re
 from datetime import datetime
-from utils import clean_string, normalize_special_characters, detect_column_type
+from backend.utils import clean_string, normalize_special_characters, detect_column_type
 
 
 class DataCleaningPipeline:
