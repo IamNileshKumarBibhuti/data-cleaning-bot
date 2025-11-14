@@ -5,70 +5,59 @@ import axios from 'axios'
  * Handles file uploads and data retrieval.
  */
 
-// Get backend URL from environment or use default
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+// Backend URL from environment (Vercel) OR fallback to localhost
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  'https://data-cleaning-bot-btya.onrender.com'; // fallback for safety
+
+console.log("🔗 Using Backend URL:", API_BASE_URL);
 
 /**
  * Upload a CSV file for cleaning.
- * 
- * @param {File} file - The CSV file to upload
- * @returns {Promise} - Response with cleaned data, script, and AI report
  */
 export async function uploadAndCleanData(file) {
   try {
-    // Create FormData for file upload
-    const formData = new FormData()
-    formData.append('file', file)
+    const formData = new FormData();
+    formData.append('file', file);
 
-    // Send request to backend
     const response = await axios.post(`${API_BASE_URL}/clean`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
-      timeout: 60000, // 60 second timeout
-    })
+      timeout: 60000,
+    });
 
-    return response.data
+    return response.data;
   } catch (error) {
-    // Handle different error types
     if (error.response) {
-      // Server responded with error
       throw new Error(
-        error.response.data?.detail || 'Server error: ' + error.response.status
-      )
+        error.response.data?.detail || 'Server error: ' + error.response.status,
+      );
     } else if (error.request) {
-      // Request made but no response
-      throw new Error('No response from server. Is the backend running?')
+      throw new Error('No response from server.');
     } else {
-      // Error in setup
-      throw new Error('Error: ' + error.message)
+      throw new Error('Error: ' + error.message);
     }
   }
 }
 
 /**
- * Check backend health status.
- * 
- * @returns {Promise<boolean>} - True if backend is healthy
+ * Health check
  */
 export async function checkHealth() {
   try {
     const response = await axios.get(`${API_BASE_URL}/health`, {
       timeout: 5000,
-    })
-    return response.data.status === 'ok'
+    });
+    return response.data.status === 'ok';
   } catch {
-    return false
+    return false;
   }
 }
 
 /**
- * Decode base64 string to text.
- * Used for downloaded CSV and Python scripts.
- * 
- * @param {string} base64 - Base64 encoded string
- * @returns {string} - Decoded text
+ * Decode base64 to UTF-8
  */
 export function decodeBase64(base64) {
-  return Buffer.from(base64, 'base64').toString('utf-8')
+  return Buffer.from(base64, 'base64').toString('utf-8');
 }
