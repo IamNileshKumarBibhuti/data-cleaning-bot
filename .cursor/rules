@@ -1,0 +1,78 @@
+# Cursor AI Rules for Data Cleaning Bot
+
+## Project Context
+Full-stack GenAI CSV data cleaning application. Backend (FastAPI + pandas + AI) processes uploads via `/clean` endpoint. Frontend (Next.js + React + Tailwind) handles upload UI and results display.
+
+## Code Style
+
+### Python (Backend)
+- Use type hints: `def func(x: str) -> int:`
+- Docstrings for all functions: `"""One-line description. Detailed explanation."""`
+- Error handling: try/except with specific exceptions
+- Constants in UPPER_CASE
+- Private methods with leading underscore
+
+### JavaScript/React (Frontend)
+- Functional components only (no classes except ErrorBoundary)
+- Use hooks: useState, useRef, etc.
+- JSDoc comments for complex functions
+- Tailwind classes (no CSS modules)
+- Component names PascalCase
+
+## Key Architecture Decisions
+
+1. **Cleaning Pipeline:** Sequential steps in `DataCleaningPipeline` class, each tracked for script generation
+2. **Type Detection:** Heuristic-based `detect_column_type()` function used everywhere
+3. **Base64 Transfer:** Results encoded as base64 for safe JSON transmission
+4. **Error Boundaries:** React ErrorBoundary + FastAPI exception handlers for graceful failures
+5. **AI Fallback:** If API fails, use hardcoded fallback report
+
+## Common Tasks
+
+### Add New Cleaning Step
+1. Add method to `DataCleaningPipeline` class
+2. Call from `run_pipeline()`
+3. Append to `self.cleaning_steps` with description
+4. Update `summary` dict if tracking metrics
+5. Add to prompt in `ai_report.py`
+
+### Add New API Response Field
+1. Update `CleaningResponse` pydantic model in `main.py`
+2. Populate field in `/clean` endpoint
+3. Update frontend to use new field
+4. Update `.github/copilot-instructions.md`
+
+### Modify Cleaning Behavior
+1. Edit logic in `cleaning_logic.py`
+2. Ensure column type detection works for your logic
+3. Test with diverse CSV (mixed types, nulls, duplicates)
+4. Update AI report prompt if behavior changes
+
+## Files to Preserve
+
+- `backend/requirements.txt` - Dependency versions (critical for reproducibility)
+- `frontend/package.json` - Node dependencies
+- `.github/copilot-instructions.md` - AI agent guidance
+- `README.md` - Full documentation
+
+## Testing Checklist
+
+- [ ] Backend starts: `python main.py` → http://localhost:8000/health returns ok
+- [ ] Frontend starts: `npm run dev` → http://localhost:3000 loads
+- [ ] API key set: `OPENAI_API_KEY` or `GROQ_API_KEY` in `.env`
+- [ ] Sample CSV uploads: No crashes
+- [ ] Downloads work: CSV and script files are readable
+- [ ] AI report displays: No truncation or formatting issues
+
+## Deployment Notes
+
+- Backend: Vercel serverless (wrap with Mangum)
+- Frontend: Vercel static/SSR
+- ENV vars: Set via Vercel dashboard
+- Monitor: API costs (OpenAI charges per request)
+
+## Documentation
+
+- Inline code comments explain the "why" not just the "what"
+- Keep for students to understand implementation
+- API docs in README.md (copy from comments)
