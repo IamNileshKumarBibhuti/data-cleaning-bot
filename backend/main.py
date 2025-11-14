@@ -8,7 +8,6 @@ Main application entry point with API endpoints for:
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from backend.utils_serialization import to_serializable
 
 
 import os
@@ -17,8 +16,11 @@ import base64
 from io import StringIO, BytesIO
 import traceback
 
-from cleaning_logic import DataCleaningPipeline, generate_python_script
-from ai_report import generate_ai_report
+from backend.cleaning_logic import DataCleaningPipeline, generate_python_script
+from backend.utils_serialization import to_serializable
+
+
+from backend.ai_report import generate_ai_report
 from pydantic import BaseModel
 
 
